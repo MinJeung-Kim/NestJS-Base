@@ -4,8 +4,9 @@
 
 type User {
   id: String!
-  name: String!
   email: String!
+  name: String!
+  age: Int!
 }
 
 type Board {
@@ -52,14 +53,19 @@ type Product {
   tags: [Tag!]!
 }
 
+type Auth {
+  email: String!
+  accessToken: String!
+}
+
 type Query {
   findAll: [Board!]
   board(id: Int!): Board!
+  products: [Product!]!
+  product(id: String!): Product!
   users: [User!]!
-  user(id: Int!): User!
+  user: User!
   productLocation(id: Int!): ProductLocation!
-  tags: [Tag!]!
-  tag(id: Int!): Tag!
 }
 
 type Mutation {
@@ -67,6 +73,8 @@ type Mutation {
   updateBoard(updateBoardInput: UpdateBoardInput!): Board!
   removeBoard(id: Int!): Board!
   createProduct(createProductInput: CreateProductInput!): Product!
+  updateProduct(id: String!, updateProductInput: UpdateProductInput!): Product!
+  removeProduct(id: String!): Boolean!
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: Int!): User!
@@ -74,9 +82,7 @@ type Mutation {
   createProductLocation(productLocationInput: ProductLocationInput!): ProductLocation!
   updateProductLocation(updateProductLocationInput: UpdateProductLocationInput!): ProductLocation!
   removeProductLocation(id: Int!): ProductLocation!
-  createTag(createTagInput: CreateTagInput!): Tag!
-  updateTag(updateTagInput: UpdateTagInput!): Tag!
-  removeTag(id: Int!): Tag!
+  login(loginInput: LoginInput!): Auth!
 }
 
 input CreateBoardInput {
@@ -97,6 +103,8 @@ input CreateProductInput {
   description: String!
   price: Int!
   productLocation: ProductLocationInput!
+  categoryId: String!
+  tags: [String!]!
 }
 
 input ProductLocationInput {
@@ -107,14 +115,27 @@ input ProductLocationInput {
   meetingTime: DateTime!
 }
 
+input UpdateProductInput {
+  name: String
+  description: String
+  price: Int
+  productLocation: ProductLocationInput
+  categoryId: String
+  tags: [String!]
+}
+
 input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  email: String!
+  password: String!
+  age: Int!
 }
 
 input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  name: String
+  email: String
+  password: String
+  age: Int
   id: Int!
 }
 
@@ -128,13 +149,7 @@ input UpdateProductLocationInput {
   id: Int!
 }
 
-input CreateTagInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateTagInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+input LoginInput {
+  email: String!
+  password: String!
 }

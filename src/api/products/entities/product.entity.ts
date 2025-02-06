@@ -55,7 +55,7 @@ export class Product {
   user: User;
 
   @JoinTable() // tag와 product의 중간 테이블 생성
-  @ManyToMany(() => Tag, (tag) => tag.products)
+  @ManyToMany(() => Tag, { eager: true })
   @Field(() => [Tag])
   tags: Tag[];
 

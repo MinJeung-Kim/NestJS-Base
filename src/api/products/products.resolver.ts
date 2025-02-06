@@ -1,8 +1,8 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 import { CreateProductInput } from './dto/create-product.input';
-// import { UpdateProductInput } from './dto/update-product.input';
+import { UpdateProductInput } from './dto/update-product.input';
 
 @Resolver(() => Product)
 export class ProductsResolver {
@@ -15,28 +15,28 @@ export class ProductsResolver {
     return this.productsService.create(createProductInput);
   }
 
-  // @Query(() => [Product], { name: 'products' })
-  // findAll() {
-  //   return this.productsService.findAll();
-  // }
+  @Query(() => [Product], { name: 'products' })
+  findAll() {
+    return this.productsService.findAll();
+  }
 
-  // @Query(() => Product, { name: 'product' })
-  // findOne(@Args('id', { type: () => String }) id: string) {
-  //   return this.productsService.findOne(id);
-  // }
+  @Query(() => Product, { name: 'product' })
+  findOne(@Args('id', { type: () => String }) id: string) {
+    return this.productsService.findOne(id);
+  }
 
-  // @Mutation(() => Product)
-  // updateProduct(
-  //   @Args('id', { type: () => String }) id: string,
-  //   @Args('updateProductInput') updateProductInput: UpdateProductInput,
-  // ): Promise<Product> {
-  //   return this.productsService.update(id, updateProductInput);
-  // }
+  @Mutation(() => Product)
+  updateProduct(
+    @Args('id', { type: () => String }) id: string,
+    @Args('updateProductInput') updateProductInput: UpdateProductInput,
+  ): Promise<Product> {
+    return this.productsService.update(id, updateProductInput);
+  }
 
-  // @Mutation(() => Boolean)
-  // removeProduct(
-  //   @Args('id', { type: () => String }) id: string,
-  // ): Promise<boolean> {
-  //   return this.productsService.remove(id);
-  // }
+  @Mutation(() => Boolean)
+  removeProduct(
+    @Args('id', { type: () => String }) id: string,
+  ): Promise<boolean> {
+    return this.productsService.remove(id);
+  }
 }

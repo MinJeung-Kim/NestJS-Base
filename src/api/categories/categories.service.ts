@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryInput } from './dto/create-category.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm';
+import { CreateCategoryInput } from './dto/create-category.input';
 // import { UpdateCategoryInput } from './dto/update-category.input';
 
 @Injectable()
@@ -12,8 +12,10 @@ export class CategoriesService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  create(name: CreateCategoryInput) {
-    return this.categoryRepository.save(name);
+  create(createCategoryInput: CreateCategoryInput): Promise<Category> {
+    return this.categoryRepository.save({
+      ...createCategoryInput,
+    });
   }
 
   // findAll() {

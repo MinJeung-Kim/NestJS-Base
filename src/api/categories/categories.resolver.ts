@@ -11,7 +11,7 @@ export class CategoriesResolver {
   @Mutation(() => Category)
   createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
-  ) {
+  ): Promise<Category> {
     return this.categoriesService.create(createCategoryInput);
   }
 

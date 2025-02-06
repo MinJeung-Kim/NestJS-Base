@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CategoriesModule } from './api/categories/categories.module';
 import { ProductLocationModule } from './api/productLocation/productLocation.module';
 import { TagsModule } from './api/tags/tags.module';
+import { AuthModule } from './api/auth/auth.module';
 
 @Module({
   imports: [
@@ -18,10 +19,12 @@ import { TagsModule } from './api/tags/tags.module';
     CategoriesModule,
     ProductLocationModule,
     TagsModule,
+    AuthModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/common/graphql/schema.gql',
+      context: ({ req, res }) => ({ req, res }),
     }),
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as 'mysql',

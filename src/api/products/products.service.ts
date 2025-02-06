@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductLocationService } from '../productLocation/productLocation.service';
+import { TagsService } from '../tags/tags.service';
 
 @Injectable()
 export class ProductsService {
@@ -16,32 +17,56 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
     private readonly productLocationService: ProductLocationService,
+    private readonly tagsService: TagsService,
   ) {}
 
   async create(createProductInput: CreateProductInput): Promise<Product> {
     // 상품과 상품거래 위치를 같이 등록하는 로직을 추가
 
-    const { productLocation, ...productRest } = createProductInput;
+    const { productLocation, categoryId, tags, ...productRest } =
+      createProductInput;
 
     const result = await this.productLocationService.create(productLocation);
+
+    // tags = ['#태그1', '#태그2', '#태그3']
+    const tagNames = tags.map((el) => el.replace('#', ''));
+
+    // 이미 저장된 태그들
+    const prevTags = await this.tagsService.findAll(tagNames);
+
+    const names: { name: string }[] = [];
+
+    tagNames.forEach((el) => {
+      const isExixts = prevTags.find((tag) => tag.name === el);
+      if (!isExixts) {
+        names.push({ name: el });
+      }
+    });
+
+    const newTags = await this.tagsService.create(names);
+    const allTags = [...prevTags, ...newTags.identifiers];
 
     // 상품 저장과 위지 저장
     const product = this.productsRepository.save({
       ...productRest,
       productLocation: result,
+      category: { id: categoryId },
+      tags: allTags,
     });
 
     return product;
   }
 
   findAll(): Promise<Product[]> {
-    return this.productsRepository.find({ relations: ['productLocation'] });
+    return this.productsRepository.find({
+      relations: ['productLocation', 'category'],
+    });
   }
 
-  async findOne(id: string): Promise<Product | null> {
+  async findOne(id: string): Promise<Product> {
     const product = await this.productsRepository.findOne({
       where: { id },
-      relations: ['productLocation'],
+      relations: ['productLocation', 'category'],
     });
 
     if (!product) {
@@ -57,13 +82,36 @@ export class ProductsService {
   ): Promise<Product> {
     const product = await this.findOne(id);
 
-    if (product) {
-      this.checkSoldOut(product);
+    if (product == null) {
+      throw new NotFoundException('존재하지 않는 product 입니다!');
     }
 
-    const result = this.productsRepository.save({
+    this.checkSoldOut(product);
+
+    let updatedTags = product.tags;
+    if (updateProductInput.tags) {
+      const tagNames = updateProductInput.tags.map((el) => el.replace('#', ''));
+      const prevTags = await this.tagsService.findAll(tagNames);
+      const names: { name: string }[] = [];
+
+      tagNames.forEach((el) => {
+        const isExists = prevTags.find((tag) => tag.name === el);
+        if (!isExists) {
+          names.push({ name: el });
+        }
+      });
+
+      const createdTags = await this.tagsService.findAll(
+        names.map((tag) => tag.name),
+      );
+
+      updatedTags = [...prevTags, ...createdTags];
+    }
+
+    const result = await this.productsRepository.save({
       ...product,
       ...updateProductInput,
+      tags: updatedTags,
     });
 
     return result;
