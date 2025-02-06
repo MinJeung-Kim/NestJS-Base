@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
-export class Sale {
+export class ProductLocation {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => String)
   id: string;
@@ -11,6 +11,10 @@ export class Sale {
   @Column()
   @Field(() => String)
   address: string;
+
+  @Column()
+  @Field(() => String)
+  addressDetail: string;
 
   @Column({ type: 'decimal', precision: 9, scale: 6 }) // 9자리 중에 소수점 6자리
   @Field(() => Float)

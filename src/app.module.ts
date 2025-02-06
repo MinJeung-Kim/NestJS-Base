@@ -7,7 +7,7 @@ import { ProductsModule } from './api/products/products.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { CategoriesModule } from './api/categories/categories.module';
-import { SalesModule } from './api/sales/sales.module';
+import { ProductLocationModule } from './api/productLocation/productLocation.module';
 import { TagsModule } from './api/tags/tags.module';
 
 @Module({
@@ -16,7 +16,7 @@ import { TagsModule } from './api/tags/tags.module';
     ProductsModule,
     UsersModule,
     CategoriesModule,
-    SalesModule,
+    ProductLocationModule,
     TagsModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({

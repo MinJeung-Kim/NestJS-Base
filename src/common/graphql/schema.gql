@@ -20,9 +20,10 @@ type Category {
   name: String!
 }
 
-type Sale {
+type ProductLocation {
   id: String!
   address: String!
+  addressDetail: String!
   lat: Float!
   lng: Float!
   meetingTime: DateTime!
@@ -45,23 +46,18 @@ type Product {
   description: String!
   price: Int!
   isSoldOut: Boolean!
-  saleId: Sale!
-  categoryId: Category!
-  userId: User!
+  productLocation: ProductLocation!
+  category: Category!
+  user: User!
   tags: [Tag!]!
 }
 
 type Query {
   findAll: [Board!]
   board(id: Int!): Board!
-  products: [Product!]!
-  product(id: String!): Product!
   users: [User!]!
   user(id: Int!): User!
-  categories: [Category!]!
-  category(id: Int!): Category!
-  sales: [Sale!]!
-  sale(id: Int!): Sale!
+  productLocation(id: Int!): ProductLocation!
   tags: [Tag!]!
   tag(id: Int!): Tag!
 }
@@ -71,17 +67,13 @@ type Mutation {
   updateBoard(updateBoardInput: UpdateBoardInput!): Board!
   removeBoard(id: Int!): Board!
   createProduct(createProductInput: CreateProductInput!): Product!
-  updateProduct(updateProductInput: UpdateProductInput!): Product!
-  removeProduct(id: Int!): Product!
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: Int!): User!
   createCategory(createCategoryInput: CreateCategoryInput!): Category!
-  updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
-  removeCategory(id: Int!): Category!
-  createSale(createSaleInput: CreateSaleInput!): Sale!
-  updateSale(updateSaleInput: UpdateSaleInput!): Sale!
-  removeSale(id: Int!): Sale!
+  createProductLocation(productLocationInput: ProductLocationInput!): ProductLocation!
+  updateProductLocation(updateProductLocationInput: UpdateProductLocationInput!): ProductLocation!
+  removeProductLocation(id: Int!): ProductLocation!
   createTag(createTagInput: CreateTagInput!): Tag!
   updateTag(updateTagInput: UpdateTagInput!): Tag!
   removeTag(id: Int!): Tag!
@@ -104,13 +96,15 @@ input CreateProductInput {
   name: String!
   description: String!
   price: Int!
+  productLocation: ProductLocationInput!
 }
 
-input UpdateProductInput {
-  name: String
-  description: String
-  price: Int
-  id: Int!
+input ProductLocationInput {
+  address: String!
+  addressDetail: String!
+  lat: Float!
+  lng: Float!
+  meetingTime: DateTime!
 }
 
 input CreateUserInput {
@@ -125,22 +119,10 @@ input UpdateUserInput {
 }
 
 input CreateCategoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
 }
 
-input UpdateCategoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateSaleInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateSaleInput {
+input UpdateProductLocationInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
