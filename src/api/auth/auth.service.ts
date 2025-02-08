@@ -54,7 +54,7 @@ export class AuthService {
 
     // 개발 환경
     context.res.setHeader(
-      'set-Cookie',
+      'set-cookie',
       `refreshToken=${refreshToken}; path=/;`,
     );
 
@@ -64,5 +64,8 @@ export class AuthService {
     //   `refreshToken=${refreshToken}; path=/; domain=.백엔드URL; SameSite=None; Secure; httpOnly;`,
     // );
     // context.res.setHeader("Access-Control-Allow-Origin", "https://프론트엔드 URL")
+
+    // 브라우저에서 셋팅 설정 변경 후 어플리케이션 탭에서 확인가능
+    // "request.credentials": "include",
   }
 }

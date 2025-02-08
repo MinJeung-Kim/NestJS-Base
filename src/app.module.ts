@@ -10,6 +10,7 @@ import { CategoriesModule } from './api/categories/categories.module';
 import { ProductLocationModule } from './api/productLocation/productLocation.module';
 import { TagsModule } from './api/tags/tags.module';
 import { AuthModule } from './api/auth/auth.module';
+import { FilesModule } from './api/files/files.module';
 
 @Module({
   imports: [
@@ -20,10 +21,12 @@ import { AuthModule } from './api/auth/auth.module';
     ProductLocationModule,
     TagsModule,
     AuthModule,
+    FilesModule,
     ConfigModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/common/graphql/schema.gql',
+      csrfPrevention: false, // ✨ 프로덕트 환경에서는 true로 변경해줘야함 (CSRF 공격 방지)
       context: ({ req, res }) => ({ req, res }),
     }),
     TypeOrmModule.forRoot({
