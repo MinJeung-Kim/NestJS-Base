@@ -83,7 +83,7 @@ type Mutation {
   updateProductLocation(updateProductLocationInput: UpdateProductLocationInput!): ProductLocation!
   removeProductLocation(id: Int!): ProductLocation!
   login(loginInput: LoginInput!): Auth!
-  uploadFile(file: Upload!): String!
+  uploadFiles(files: [Upload!]!): [String!]!
 }
 
 input CreateBoardInput {

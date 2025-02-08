@@ -38,29 +38,76 @@ export class FilesService {
     });
   }
 
-  async upload(file: FileUpload): Promise<string> {
-    const key = `images/${Date.now()}-${file.filename}`;
-    const upload = new Upload({
-      client: this.s3,
-      params: {
-        Bucket: this.bucketName,
-        Key: key,
-        Body: file.createReadStream(),
-        ContentType: file.mimetype,
-      },
+  // async upload(file: FileUpload): Promise<string> {
+  //   const key = `images/${Date.now()}-${file.filename}`;
+  //   const upload = new Upload({
+  //     client: this.s3,
+  //     params: {
+  //       Bucket: this.bucketName,
+  //       Key: key,
+  //       Body: file.createReadStream(),
+  //       ContentType: file.mimetype,
+  //     },
+  //   });
+
+  //   // 업로드 진행 상황을 모니터링
+  //   upload.on('httpUploadProgress', (progress) => {
+  //     console.log(progress);
+  //   });
+
+  //   // 업로드 완료까지 대기
+  //   await upload.done();
+
+  //   console.log('파일 전송이 완료되었습니다.');
+
+  //   // S3 URL 반환
+  //   return `https://${this.bucketName}.s3.amazonaws.com/${key}`;
+  // }
+
+  async uploads(files: FileUpload[]): Promise<string[]> {
+    const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+    // const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+    const waitedFiles = await Promise.all(files);
+
+    // 각 파일 유효성 검사
+    waitedFiles.forEach((file) => {
+      if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+        throw new Error(`지원하지 않는 파일 형식입니다: ${file.filename}`);
+      }
+    });
+    // 각 파일에 대한 업로드 Promise 생성
+    const uploadPromises = waitedFiles.map(async (file) => {
+      const key = `images/${Date.now()}-${file.filename}`;
+
+      const upload = new Upload({
+        client: this.s3,
+        params: {
+          Bucket: this.bucketName,
+          Key: key,
+          Body: file.createReadStream(),
+          ContentType: file.mimetype,
+        },
+      });
+
+      // 진행상황 모니터링 (필요한 경우)
+      upload.on('httpUploadProgress', (progress) => {
+        console.log(`${file.filename} 업로드 진행률:`, progress);
+      });
+
+      // 업로드 완료 대기
+      await upload.done();
+
+      console.log(`${file.filename} 업로드 완료`);
+
+      return `https://${this.bucketName}.s3.amazonaws.com/${key}`;
     });
 
-    // 업로드 진행 상황을 모니터링
-    upload.on('httpUploadProgress', (progress) => {
-      console.log(progress);
-    });
+    // 모든 업로드 완료 대기
+    const uploadedUrls = await Promise.all(uploadPromises);
 
-    // 업로드 완료까지 대기
-    await upload.done();
+    console.log('모든 파일 업로드가 완료되었습니다.');
 
-    console.log('파일 전송이 완료되었습니다.');
-
-    // S3 URL 반환
-    return `https://${this.bucketName}.s3.amazonaws.com/${key}`;
+    return uploadedUrls;
   }
 }
