@@ -3,6 +3,8 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { ConfigService } from '@nestjs/config';
 import { FileUpload } from 'graphql-upload-ts';
+import { getToday } from 'src/common/libraries/utils';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class FilesService {
@@ -39,7 +41,7 @@ export class FilesService {
   }
 
   // async upload(file: FileUpload): Promise<string> {
-  //   const key = `images/${Date.now()}-${file.filename}`;
+  //   const key = `images/${getToday()}/${uuidv4()}/origin/${file.filename}`;
   //   const upload = new Upload({
   //     client: this.s3,
   //     params: {
@@ -78,7 +80,7 @@ export class FilesService {
     });
     // 각 파일에 대한 업로드 Promise 생성
     const uploadPromises = waitedFiles.map(async (file) => {
-      const key = `images/${Date.now()}-${file.filename}`;
+      const key = `images/${getToday()}/${uuidv4()}/origin/${file.filename}`;
 
       const upload = new Upload({
         client: this.s3,
