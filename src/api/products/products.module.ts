@@ -7,10 +7,12 @@ import { ProductLocationService } from '../productLocation/productLocation.servi
 import { ProductLocation } from '../productLocation/entities/productLocation.entity';
 import { Tag } from '../tags/entities/tag.entity';
 import { TagsService } from '../tags/tags.service';
+import { ProductSubscriber } from './entities/product.subscriber';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Product, ProductLocation, Tag])],
   providers: [
+    ProductSubscriber,
     ProductsResolver,
     ProductsService,
     ProductLocationService,
